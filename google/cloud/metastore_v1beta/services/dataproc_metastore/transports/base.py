@@ -32,9 +32,7 @@ from google.longrunning import operations_pb2 as operations  # type: ignore
 
 try:
     DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo(
-        gapic_version=pkg_resources.get_distribution(
-            "google-cloud-dataproc-metastore",
-        ).version,
+        gapic_version=pkg_resources.get_distribution("google-cloud-metastore",).version,
     )
 except pkg_resources.DistributionNotFound:
     DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo()
