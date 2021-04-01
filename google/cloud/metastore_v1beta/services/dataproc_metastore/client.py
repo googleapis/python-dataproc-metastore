@@ -459,7 +459,7 @@ class DataprocMetastoreClient(metaclass=DataprocMetastoreClientMeta):
         Returns:
             google.cloud.metastore_v1beta.services.dataproc_metastore.pagers.ListServicesPager:
                 Response message for
-                [DataprocMetastore.ListServices][google.cloud.metastore.v1beta.DataprocMetastore.ListServices].
+                   [DataprocMetastore.ListServices][google.cloud.metastore.v1beta.DataprocMetastore.ListServices].
 
                 Iterating over this object will yield results and
                 resolve additional pages automatically.
@@ -939,7 +939,7 @@ class DataprocMetastoreClient(metaclass=DataprocMetastoreClientMeta):
         Returns:
             google.cloud.metastore_v1beta.services.dataproc_metastore.pagers.ListMetadataImportsPager:
                 Response message for
-                [DataprocMetastore.ListMetadataImports][google.cloud.metastore.v1beta.DataprocMetastore.ListMetadataImports].
+                   [DataprocMetastore.ListMetadataImports][google.cloud.metastore.v1beta.DataprocMetastore.ListMetadataImports].
 
                 Iterating over this object will yield results and
                 resolve additional pages automatically.
@@ -1485,7 +1485,7 @@ class DataprocMetastoreClient(metaclass=DataprocMetastoreClientMeta):
         Returns:
             google.cloud.metastore_v1beta.services.dataproc_metastore.pagers.ListBackupsPager:
                 Response message for
-                [DataprocMetastore.ListBackups][google.cloud.metastore.v1beta.DataprocMetastore.ListBackups].
+                   [DataprocMetastore.ListBackups][google.cloud.metastore.v1beta.DataprocMetastore.ListBackups].
 
                 Iterating over this object will yield results and
                 resolve additional pages automatically.
@@ -1824,7 +1824,9 @@ class DataprocMetastoreClient(metaclass=DataprocMetastoreClientMeta):
 
 try:
     DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo(
-        gapic_version=pkg_resources.get_distribution("google-cloud-metastore",).version,
+        gapic_version=pkg_resources.get_distribution(
+            "google-cloud-dataproc-metastore",
+        ).version,
     )
 except pkg_resources.DistributionNotFound:
     DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo()
