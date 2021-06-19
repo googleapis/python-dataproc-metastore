@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.3](https://www.github.com/googleapis/python-dataproc-metastore/compare/v0.2.2...v0.2.3) (2021-06-19)
+
+
+### Documentation
+
+* omit mention of Python 2.7 in 'CONTRIBUTING.rst' ([#1127](https://www.github.com/googleapis/python-dataproc-metastore/issues/1127)) ([#38](https://www.github.com/googleapis/python-dataproc-metastore/issues/38)) ([9b8c147](https://www.github.com/googleapis/python-dataproc-metastore/commit/9b8c14739b9cb5d02f9372d952acf099712f9826)), closes [#1126](https://www.github.com/googleapis/python-dataproc-metastore/issues/1126)
+
 ### [0.2.2](https://www.github.com/googleapis/python-dataproc-metastore/compare/v0.2.1...v0.2.2) (2021-06-16)
 
 
