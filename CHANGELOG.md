@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://www.github.com/googleapis/python-dataproc-metastore/compare/v0.3.0...v0.4.0) (2021-07-24)
+
+
+### Features
+
+* add Samples section to CONTRIBUTING.rst ([#51](https://www.github.com/googleapis/python-dataproc-metastore/issues/51)) ([c093c12](https://www.github.com/googleapis/python-dataproc-metastore/commit/c093c1282e832f3d7a027d63be1b55017bcec9ff))
+
+
+### Bug Fixes
+
+* **deps:** pin 'google-{api,cloud}-core', 'google-auth' to allow 2.x versions ([#50](https://www.github.com/googleapis/python-dataproc-metastore/issues/50)) ([091ff2f](https://www.github.com/googleapis/python-dataproc-metastore/commit/091ff2fa0cc9413c99cb3c17a18af9de131bca01))
+* enable self signed jwt for grpc ([#56](https://www.github.com/googleapis/python-dataproc-metastore/issues/56)) ([3f94f5a](https://www.github.com/googleapis/python-dataproc-metastore/commit/3f94f5adb30d4e9a6e28424259a9a26b78429740))
+
 ## [0.3.0](https://www.github.com/googleapis/python-dataproc-metastore/compare/v0.2.2...v0.3.0) (2021-07-01)
 
 
