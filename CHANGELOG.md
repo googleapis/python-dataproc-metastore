@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.3.2](https://github.com/googleapis/python-dataproc-metastore/compare/v0.3.1...v0.3.2) (2022-04-01)
+
+
+### Bug Fixes
+
+* **deps:** require google-api-core >= 1.31.5, >= 2.3.2 on v0 release ([#127](https://github.com/googleapis/python-dataproc-metastore/issues/127)) ([b1b65e8](https://github.com/googleapis/python-dataproc-metastore/commit/b1b65e84e595768fd4ae324f4fa70b46eeada5b8))
+
 ### [0.3.1](https://www.github.com/googleapis/python-dataproc-metastore/compare/v0.3.0...v0.3.1) (2021-07-26)
 
 
