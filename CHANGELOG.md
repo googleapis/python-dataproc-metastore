@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/googleapis/python-dataproc-metastore/compare/v0.3.2...v0.3.3) (2022-06-07)
+
+
+### Bug Fixes
+
+* **deps:** require protobuf<4.0.0 on v0 branch ([#152](https://github.com/googleapis/python-dataproc-metastore/issues/152)) ([b213839](https://github.com/googleapis/python-dataproc-metastore/commit/b21383970961946521357bb5674716beff828e7b))
+
 ### [0.3.2](https://github.com/googleapis/python-dataproc-metastore/compare/v0.3.1...v0.3.2) (2022-04-01)
 
 
