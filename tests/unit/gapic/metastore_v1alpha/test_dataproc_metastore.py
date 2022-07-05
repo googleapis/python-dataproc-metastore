@@ -5171,7 +5171,6 @@ def test_dataproc_metastore_transport_auth_adc(transport_class):
     [
         transports.DataprocMetastoreGrpcTransport,
         transports.DataprocMetastoreGrpcAsyncIOTransport,
-        transports.DataprocMetastoreRestTransport,
     ],
 )
 def test_dataproc_metastore_transport_auth_gdch_credentials(transport_class):
