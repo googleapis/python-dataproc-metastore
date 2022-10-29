@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from google.cloud.metastore import gapic_version as package_version
+
+__version__ = package_version.__version__
+
 
 from google.cloud.metastore_v1.services.dataproc_metastore.async_client import (
     DataprocMetastoreAsyncClient,
