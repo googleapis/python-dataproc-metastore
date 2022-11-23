@@ -31,7 +31,7 @@ from google.cloud.metastore_v1alpha.types import metastore
 try:
     DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo(
         gapic_version=pkg_resources.get_distribution(
-            "google-cloud-metastore",
+            "google-cloud-dataproc-metastore",
         ).version,
     )
 except pkg_resources.DistributionNotFound:

@@ -20,10 +20,10 @@ import setuptools  # type: ignore
 
 package_root = os.path.abspath(os.path.dirname(__file__))
 
-name = "google-cloud-metastore"
+name = "google-cloud-dataproc-metastore"
 
 
-description = "Google Cloud Metastore API client library"
+description = "Google Cloud Dataproc Metastore API client library"
 
 version = {}
 with open(os.path.join(package_root, "google/cloud/metastore/gapic_version.py")) as fp:
@@ -40,7 +40,7 @@ dependencies = [
     "proto-plus >= 1.22.0, <2.0.0dev",
     "protobuf>=3.19.5,<5.0.0dev,!=3.20.0,!=3.20.1,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5",
 ]
-url = "https://github.com/googleapis/python-metastore"
+url = "https://github.com/googleapis/python-dataproc-metastore"
 
 package_root = os.path.abspath(os.path.dirname(__file__))
 

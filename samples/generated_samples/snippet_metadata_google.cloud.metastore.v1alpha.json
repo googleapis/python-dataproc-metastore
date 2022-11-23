@@ -7,7 +7,7 @@
       }
     ],
     "language": "PYTHON",
-    "name": "google-cloud-metastore",
+    "name": "google-cloud-dataproc-metastore",
     "version": "0.1.0"
   },
   "snippets": [
