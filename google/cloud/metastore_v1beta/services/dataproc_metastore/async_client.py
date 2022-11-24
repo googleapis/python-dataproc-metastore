@@ -57,12 +57,11 @@ from .transports.grpc_asyncio import DataprocMetastoreGrpcAsyncIOTransport
 
 class DataprocMetastoreAsyncClient:
     """Configures and manages metastore services. Metastore services are
-    fully managed, highly available, auto-scaled, auto-healing,
-    OSS-native deployments of technical metadata management software.
-    Each metastore service exposes a network endpoint through which
-    metadata queries are served. Metadata queries can originate from a
-    variety of sources, including Apache Hive, Apache Presto, and Apache
-    Spark.
+    fully managed, highly available, autoscaled, autohealing, OSS-native
+    deployments of technical metadata management software. Each
+    metastore service exposes a network endpoint through which metadata
+    queries are served. Metadata queries can originate from a variety of
+    sources, including Apache Hive, Apache Presto, and Apache Spark.
 
     The Dataproc Metastore API defines the following resource model:
 
@@ -88,6 +87,8 @@ class DataprocMetastoreAsyncClient:
 
     backup_path = staticmethod(DataprocMetastoreClient.backup_path)
     parse_backup_path = staticmethod(DataprocMetastoreClient.parse_backup_path)
+    lake_path = staticmethod(DataprocMetastoreClient.lake_path)
+    parse_lake_path = staticmethod(DataprocMetastoreClient.parse_lake_path)
     metadata_import_path = staticmethod(DataprocMetastoreClient.metadata_import_path)
     parse_metadata_import_path = staticmethod(
         DataprocMetastoreClient.parse_metadata_import_path
@@ -96,6 +97,8 @@ class DataprocMetastoreAsyncClient:
     parse_network_path = staticmethod(DataprocMetastoreClient.parse_network_path)
     service_path = staticmethod(DataprocMetastoreClient.service_path)
     parse_service_path = staticmethod(DataprocMetastoreClient.parse_service_path)
+    subnetwork_path = staticmethod(DataprocMetastoreClient.subnetwork_path)
+    parse_subnetwork_path = staticmethod(DataprocMetastoreClient.parse_subnetwork_path)
     common_billing_account_path = staticmethod(
         DataprocMetastoreClient.common_billing_account_path
     )
@@ -1158,7 +1161,7 @@ class DataprocMetastoreAsyncClient:
                 which to create a metastore import, in the following
                 form:
 
-                ``projects/{project_number}/locations/{location_id}/services/{service_id}``
+                ``projects/{project_number}/locations/{location_id}/services/{service_id}``.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -1538,7 +1541,7 @@ class DataprocMetastoreAsyncClient:
                 Required. The relative resource name of the metastore
                 service to run restore, in the following form:
 
-                ``projects/{project_id}/locations/{location_id}/services/{service_id}``
+                ``projects/{project_id}/locations/{location_id}/services/{service_id}``.
 
                 This corresponds to the ``service`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -1547,7 +1550,7 @@ class DataprocMetastoreAsyncClient:
                 Required. The relative resource name of the metastore
                 service backup to restore from, in the following form:
 
-                ``projects/{project_id}/locations/{location_id}/services/{service_id}/backups/{backup_id}``
+                ``projects/{project_id}/locations/{location_id}/services/{service_id}/backups/{backup_id}``.
 
                 This corresponds to the ``backup`` field
                 on the ``request`` instance; if ``request`` is provided, this
@@ -1849,7 +1852,7 @@ class DataprocMetastoreAsyncClient:
         timeout: Optional[float] = None,
         metadata: Sequence[Tuple[str, str]] = (),
     ) -> operation_async.AsyncOperation:
-        r"""Creates a new Backup in a given project and location.
+        r"""Creates a new backup in a given project and location.
 
         .. code-block:: python
 
@@ -1890,7 +1893,7 @@ class DataprocMetastoreAsyncClient:
                 Required. The relative resource name of the service in
                 which to create a backup of the following form:
 
-                ``projects/{project_number}/locations/{location_id}/services/{service_id}``
+                ``projects/{project_number}/locations/{location_id}/services/{service_id}``.
 
                 This corresponds to the ``parent`` field
                 on the ``request`` instance; if ``request`` is provided, this

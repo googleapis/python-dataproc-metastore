@@ -29,6 +29,9 @@ __protobuf__ = proto.module(
         "HiveMetastoreConfig",
         "KerberosConfig",
         "Secret",
+        "EncryptionConfig",
+        "NetworkConfig",
+        "TelemetryConfig",
         "MetadataManagementActivity",
         "MetadataImport",
         "MetadataExport",
@@ -73,7 +76,7 @@ class Service(proto.Message):
             This field is a member of `oneof`_ ``metastore_config``.
         name (str):
             Immutable. The relative resource name of the metastore
-            service, of the form:
+            service, in the following format:
 
             ``projects/{project_number}/locations/{location_id}/services/{service_id}``.
         create_time (google.protobuf.timestamp_pb2.Timestamp):
@@ -114,7 +117,9 @@ class Service(proto.Message):
             The one hour maintenance window of the
             metastore service. This specifies when the
             service can be restarted for maintenance
-            purposes in UTC time.
+            purposes in UTC time. Maintenance window is not
+            needed for services with the SPANNER database
+            type.
         uid (str):
             Output only. The globally unique resource
             identifier of the metastore service.
@@ -124,6 +129,20 @@ class Service(proto.Message):
         release_channel (google.cloud.metastore_v1.types.Service.ReleaseChannel):
             Immutable. The release channel of the service. If
             unspecified, defaults to ``STABLE``.
+        encryption_config (google.cloud.metastore_v1.types.EncryptionConfig):
+            Immutable. Information used to configure the
+            Dataproc Metastore service to encrypt customer
+            data at rest. Cannot be updated.
+        network_config (google.cloud.metastore_v1.types.NetworkConfig):
+            The configuration specifying the network
+            settings for the Dataproc Metastore service.
+        database_type (google.cloud.metastore_v1.types.Service.DatabaseType):
+            Immutable. The database type that the
+            Metastore service stores its data.
+        telemetry_config (google.cloud.metastore_v1.types.TelemetryConfig):
+            The configuration specifying telemetry settings for the
+            Dataproc Metastore service. If unspecified defaults to
+            ``JSON``.
     """
 
     class State(proto.Enum):
@@ -152,6 +171,12 @@ class Service(proto.Message):
         RELEASE_CHANNEL_UNSPECIFIED = 0
         CANARY = 1
         STABLE = 2
+
+    class DatabaseType(proto.Enum):
+        r"""The backend database type for the metastore service."""
+        DATABASE_TYPE_UNSPECIFIED = 0
+        MYSQL = 1
+        SPANNER = 2
 
     hive_metastore_config: "HiveMetastoreConfig" = proto.Field(
         proto.MESSAGE,
@@ -227,6 +252,26 @@ class Service(proto.Message):
         number=19,
         enum=ReleaseChannel,
     )
+    encryption_config: "EncryptionConfig" = proto.Field(
+        proto.MESSAGE,
+        number=20,
+        message="EncryptionConfig",
+    )
+    network_config: "NetworkConfig" = proto.Field(
+        proto.MESSAGE,
+        number=21,
+        message="NetworkConfig",
+    )
+    database_type: DatabaseType = proto.Field(
+        proto.ENUM,
+        number=22,
+        enum=DatabaseType,
+    )
+    telemetry_config: "TelemetryConfig" = proto.Field(
+        proto.MESSAGE,
+        number=23,
+        message="TelemetryConfig",
+    )
 
 
 class MaintenanceWindow(proto.Message):
@@ -264,7 +309,9 @@ class HiveMetastoreConfig(proto.Message):
             A mapping of Hive metastore configuration key-value pairs to
             apply to the Hive metastore (configured in
             ``hive-site.xml``). The mappings override system defaults
-            (some keys cannot be overridden).
+            (some keys cannot be overridden). These overrides are also
+            applied to auxiliary versions and can be further customized
+            in the auxiliary version's ``AuxiliaryVersionConfig``.
         kerberos_config (google.cloud.metastore_v1.types.KerberosConfig):
             Information used to configure the Hive metastore service as
             a service principal in a Kerberos realm. To disable
@@ -343,6 +390,97 @@ class Secret(proto.Message):
         proto.STRING,
         number=2,
         oneof="value",
+    )
+
+
+class EncryptionConfig(proto.Message):
+    r"""Encryption settings for the service.
+
+    Attributes:
+        kms_key (str):
+            The fully qualified customer provided Cloud KMS key name to
+            use for customer data encryption, in the following form:
+
+            ``projects/{project_number}/locations/{location_id}/keyRings/{key_ring_id}/cryptoKeys/{crypto_key_id}``.
+    """
+
+    kms_key: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+
+
+class NetworkConfig(proto.Message):
+    r"""Network configuration for the Dataproc Metastore service.
+
+    Attributes:
+        consumers (MutableSequence[google.cloud.metastore_v1.types.NetworkConfig.Consumer]):
+            Immutable. The consumer-side network
+            configuration for the Dataproc Metastore
+            instance.
+    """
+
+    class Consumer(proto.Message):
+        r"""Contains information of the customer's network
+        configurations.
+
+
+        .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+        Attributes:
+            subnetwork (str):
+                Immutable. The subnetwork of the customer project from which
+                an IP address is reserved and used as the Dataproc Metastore
+                service's endpoint. It is accessible to hosts in the subnet
+                and to all hosts in a subnet in the same region and same
+                network. There must be at least one IP address available in
+                the subnet's primary range. The subnet is specified in the
+                following form:
+
+                \`projects/{project_number}/regions/{region_id}/subnetworks/{subnetwork_id}
+
+                This field is a member of `oneof`_ ``vpc_resource``.
+            endpoint_uri (str):
+                Output only. The URI of the endpoint used to
+                access the metastore service.
+        """
+
+        subnetwork: str = proto.Field(
+            proto.STRING,
+            number=1,
+            oneof="vpc_resource",
+        )
+        endpoint_uri: str = proto.Field(
+            proto.STRING,
+            number=3,
+        )
+
+    consumers: MutableSequence[Consumer] = proto.RepeatedField(
+        proto.MESSAGE,
+        number=1,
+        message=Consumer,
+    )
+
+
+class TelemetryConfig(proto.Message):
+    r"""Telemetry Configuration for the Dataproc Metastore service.
+
+    Attributes:
+        log_format (google.cloud.metastore_v1.types.TelemetryConfig.LogFormat):
+            The output format of the Dataproc Metastore
+            service's logs.
+    """
+
+    class LogFormat(proto.Enum):
+        r""""""
+        LOG_FORMAT_UNSPECIFIED = 0
+        LEGACY = 1
+        JSON = 2
+
+    log_format: LogFormat = proto.Field(
+        proto.ENUM,
+        number=1,
+        enum=LogFormat,
     )
 
 

@@ -95,6 +95,8 @@ class DataprocMetastoreAsyncClient:
     parse_network_path = staticmethod(DataprocMetastoreClient.parse_network_path)
     service_path = staticmethod(DataprocMetastoreClient.service_path)
     parse_service_path = staticmethod(DataprocMetastoreClient.parse_service_path)
+    subnetwork_path = staticmethod(DataprocMetastoreClient.subnetwork_path)
+    parse_subnetwork_path = staticmethod(DataprocMetastoreClient.parse_subnetwork_path)
     common_billing_account_path = staticmethod(
         DataprocMetastoreClient.common_billing_account_path
     )

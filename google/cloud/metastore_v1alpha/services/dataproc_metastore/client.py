@@ -639,7 +639,7 @@ class DataprocMetastoreClient(metaclass=DataprocMetastoreClientMeta):
         Returns:
             google.cloud.metastore_v1alpha.services.dataproc_metastore.pagers.ListServicesPager:
                 Response message for
-                [DataprocMetastore.ListServices][google.cloud.metastore.v1alpha.DataprocMetastore.ListServices].
+                   [DataprocMetastore.ListServices][google.cloud.metastore.v1alpha.DataprocMetastore.ListServices].
 
                 Iterating over this object will yield results and
                 resolve additional pages automatically.
@@ -1272,7 +1272,7 @@ class DataprocMetastoreClient(metaclass=DataprocMetastoreClientMeta):
         Returns:
             google.cloud.metastore_v1alpha.services.dataproc_metastore.pagers.ListMetadataImportsPager:
                 Response message for
-                [DataprocMetastore.ListMetadataImports][google.cloud.metastore.v1alpha.DataprocMetastore.ListMetadataImports].
+                   [DataprocMetastore.ListMetadataImports][google.cloud.metastore.v1alpha.DataprocMetastore.ListMetadataImports].
 
                 Iterating over this object will yield results and
                 resolve additional pages automatically.
@@ -2009,7 +2009,7 @@ class DataprocMetastoreClient(metaclass=DataprocMetastoreClientMeta):
         Returns:
             google.cloud.metastore_v1alpha.services.dataproc_metastore.pagers.ListBackupsPager:
                 Response message for
-                [DataprocMetastore.ListBackups][google.cloud.metastore.v1alpha.DataprocMetastore.ListBackups].
+                   [DataprocMetastore.ListBackups][google.cloud.metastore.v1alpha.DataprocMetastore.ListBackups].
 
                 Iterating over this object will yield results and
                 resolve additional pages automatically.

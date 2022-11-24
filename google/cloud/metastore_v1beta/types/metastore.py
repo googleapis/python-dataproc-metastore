@@ -27,10 +27,16 @@ __protobuf__ = proto.module(
         "Service",
         "MetadataIntegration",
         "DataCatalogConfig",
+        "DataplexConfig",
+        "Lake",
         "MaintenanceWindow",
         "HiveMetastoreConfig",
         "KerberosConfig",
         "Secret",
+        "EncryptionConfig",
+        "AuxiliaryVersionConfig",
+        "NetworkConfig",
+        "TelemetryConfig",
         "MetadataManagementActivity",
         "MetadataImport",
         "MetadataExport",
@@ -75,7 +81,7 @@ class Service(proto.Message):
             This field is a member of `oneof`_ ``metastore_config``.
         name (str):
             Immutable. The relative resource name of the metastore
-            service, of the form:
+            service, in the following format:
 
             ``projects/{project_number}/locations/{location_id}/services/{service_id}``.
         create_time (google.protobuf.timestamp_pb2.Timestamp):
@@ -120,7 +126,9 @@ class Service(proto.Message):
             The one hour maintenance window of the
             metastore service. This specifies when the
             service can be restarted for maintenance
-            purposes in UTC time.
+            purposes in UTC time. Maintenance window is not
+            needed for services with the SPANNER database
+            type.
         uid (str):
             Output only. The globally unique resource
             identifier of the metastore service.
@@ -130,6 +138,20 @@ class Service(proto.Message):
         release_channel (google.cloud.metastore_v1beta.types.Service.ReleaseChannel):
             Immutable. The release channel of the service. If
             unspecified, defaults to ``STABLE``.
+        encryption_config (google.cloud.metastore_v1beta.types.EncryptionConfig):
+            Immutable. Information used to configure the
+            Dataproc Metastore service to encrypt customer
+            data at rest. Cannot be updated.
+        network_config (google.cloud.metastore_v1beta.types.NetworkConfig):
+            The configuration specifying the network
+            settings for the Dataproc Metastore service.
+        database_type (google.cloud.metastore_v1beta.types.Service.DatabaseType):
+            Immutable. The database type that the
+            Metastore service stores its data.
+        telemetry_config (google.cloud.metastore_v1beta.types.TelemetryConfig):
+            The configuration specifying telemetry settings for the
+            Dataproc Metastore service. If unspecified defaults to
+            ``JSON``.
     """
 
     class State(proto.Enum):
@@ -158,6 +180,12 @@ class Service(proto.Message):
         RELEASE_CHANNEL_UNSPECIFIED = 0
         CANARY = 1
         STABLE = 2
+
+    class DatabaseType(proto.Enum):
+        r"""The backend database type for the metastore service."""
+        DATABASE_TYPE_UNSPECIFIED = 0
+        MYSQL = 1
+        SPANNER = 2
 
     hive_metastore_config: "HiveMetastoreConfig" = proto.Field(
         proto.MESSAGE,
@@ -238,6 +266,26 @@ class Service(proto.Message):
         number=19,
         enum=ReleaseChannel,
     )
+    encryption_config: "EncryptionConfig" = proto.Field(
+        proto.MESSAGE,
+        number=20,
+        message="EncryptionConfig",
+    )
+    network_config: "NetworkConfig" = proto.Field(
+        proto.MESSAGE,
+        number=21,
+        message="NetworkConfig",
+    )
+    database_type: DatabaseType = proto.Field(
+        proto.ENUM,
+        number=22,
+        enum=DatabaseType,
+    )
+    telemetry_config: "TelemetryConfig" = proto.Field(
+        proto.MESSAGE,
+        number=23,
+        message="TelemetryConfig",
+    )
 
 
 class MetadataIntegration(proto.Message):
@@ -248,12 +296,20 @@ class MetadataIntegration(proto.Message):
         data_catalog_config (google.cloud.metastore_v1beta.types.DataCatalogConfig):
             The integration config for the Data Catalog
             service.
+        dataplex_config (google.cloud.metastore_v1beta.types.DataplexConfig):
+            The integration config for the Dataplex
+            service.
     """
 
     data_catalog_config: "DataCatalogConfig" = proto.Field(
         proto.MESSAGE,
         number=1,
         message="DataCatalogConfig",
+    )
+    dataplex_config: "DataplexConfig" = proto.Field(
+        proto.MESSAGE,
+        number=2,
+        message="DataplexConfig",
     )
 
 
@@ -272,6 +328,41 @@ class DataCatalogConfig(proto.Message):
     enabled: bool = proto.Field(
         proto.BOOL,
         number=2,
+    )
+
+
+class DataplexConfig(proto.Message):
+    r"""Specifies how metastore metadata should be integrated with
+    the Dataplex service.
+
+    Attributes:
+        lake_resources (MutableMapping[str, google.cloud.metastore_v1beta.types.Lake]):
+            A reference to the Lake resources that this metastore
+            service is attached to. The key is the lake resource name.
+            Example:
+            ``projects/{project_number}/locations/{location_id}/lakes/{lake_id}``.
+    """
+
+    lake_resources: MutableMapping[str, "Lake"] = proto.MapField(
+        proto.STRING,
+        proto.MESSAGE,
+        number=1,
+        message="Lake",
+    )
+
+
+class Lake(proto.Message):
+    r"""Represents a Lake resource
+
+    Attributes:
+        name (str):
+            The Lake resource name. Example:
+            ``projects/{project_number}/locations/{location_id}/lakes/{lake_id}``
+    """
+
+    name: str = proto.Field(
+        proto.STRING,
+        number=1,
     )
 
 
@@ -310,7 +401,9 @@ class HiveMetastoreConfig(proto.Message):
             A mapping of Hive metastore configuration key-value pairs to
             apply to the Hive metastore (configured in
             ``hive-site.xml``). The mappings override system defaults
-            (some keys cannot be overridden).
+            (some keys cannot be overridden). These overrides are also
+            applied to auxiliary versions and can be further customized
+            in the auxiliary version's ``AuxiliaryVersionConfig``.
         kerberos_config (google.cloud.metastore_v1beta.types.KerberosConfig):
             Information used to configure the Hive metastore service as
             a service principal in a Kerberos realm. To disable
@@ -318,7 +411,29 @@ class HiveMetastoreConfig(proto.Message):
             field's path (``hive_metastore_config.kerberos_config``) in
             the request's ``update_mask`` while omitting this field from
             the request's ``service``.
+        endpoint_protocol (google.cloud.metastore_v1beta.types.HiveMetastoreConfig.EndpointProtocol):
+            The protocol to use for the metastore service endpoint. If
+            unspecified, defaults to ``THRIFT``.
+        auxiliary_versions (MutableMapping[str, google.cloud.metastore_v1beta.types.AuxiliaryVersionConfig]):
+            A mapping of Hive metastore version to the auxiliary version
+            configuration. When specified, a secondary Hive metastore
+            service is created along with the primary service. All
+            auxiliary versions must be less than the service's primary
+            version. The key is the auxiliary service name and it must
+            match the regular expression `a-z <[-a-z0-9]*[a-z0-9]>`__?.
+            This means that the first character must be a lowercase
+            letter, and all the following characters must be hyphens,
+            lowercase letters, or digits, except the last character,
+            which cannot be a hyphen.
     """
+
+    class EndpointProtocol(proto.Enum):
+        r"""Protocols available for serving the metastore service
+        endpoint.
+        """
+        ENDPOINT_PROTOCOL_UNSPECIFIED = 0
+        THRIFT = 1
+        GRPC = 2
 
     version: str = proto.Field(
         proto.STRING,
@@ -333,6 +448,17 @@ class HiveMetastoreConfig(proto.Message):
         proto.MESSAGE,
         number=3,
         message="KerberosConfig",
+    )
+    endpoint_protocol: EndpointProtocol = proto.Field(
+        proto.ENUM,
+        number=4,
+        enum=EndpointProtocol,
+    )
+    auxiliary_versions: MutableMapping[str, "AuxiliaryVersionConfig"] = proto.MapField(
+        proto.STRING,
+        proto.MESSAGE,
+        number=5,
+        message="AuxiliaryVersionConfig",
     )
 
 
@@ -351,8 +477,8 @@ class KerberosConfig(proto.Message):
         krb5_config_gcs_uri (str):
             A Cloud Storage URI that specifies the path to a krb5.conf
             file. It is of the form
-            gs://{bucket_name}/path/to/krb5.conf, although the file does
-            not need to be named krb5.conf explicitly.
+            ``gs://{bucket_name}/path/to/krb5.conf``, although the file
+            does not need to be named krb5.conf explicitly.
     """
 
     keytab: "Secret" = proto.Field(
@@ -389,6 +515,135 @@ class Secret(proto.Message):
         proto.STRING,
         number=2,
         oneof="value",
+    )
+
+
+class EncryptionConfig(proto.Message):
+    r"""Encryption settings for the service.
+
+    Attributes:
+        kms_key (str):
+            The fully qualified customer provided Cloud KMS key name to
+            use for customer data encryption, in the following form:
+
+            ``projects/{project_number}/locations/{location_id}/keyRings/{key_ring_id}/cryptoKeys/{crypto_key_id}``.
+    """
+
+    kms_key: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+
+
+class AuxiliaryVersionConfig(proto.Message):
+    r"""Configuration information for the auxiliary service versions.
+
+    Attributes:
+        version (str):
+            The Hive metastore version of the auxiliary
+            service. It must be less than the primary Hive
+            metastore service's version.
+        config_overrides (MutableMapping[str, str]):
+            A mapping of Hive metastore configuration key-value pairs to
+            apply to the auxiliary Hive metastore (configured in
+            ``hive-site.xml``) in addition to the primary version's
+            overrides. If keys are present in both the auxiliary
+            version's overrides and the primary version's overrides, the
+            value from the auxiliary version's overrides takes
+            precedence.
+        network_config (google.cloud.metastore_v1beta.types.NetworkConfig):
+            Output only. The network configuration
+            contains the endpoint URI(s) of the auxiliary
+            Hive metastore service.
+    """
+
+    version: str = proto.Field(
+        proto.STRING,
+        number=1,
+    )
+    config_overrides: MutableMapping[str, str] = proto.MapField(
+        proto.STRING,
+        proto.STRING,
+        number=2,
+    )
+    network_config: "NetworkConfig" = proto.Field(
+        proto.MESSAGE,
+        number=3,
+        message="NetworkConfig",
+    )
+
+
+class NetworkConfig(proto.Message):
+    r"""Network configuration for the Dataproc Metastore service.
+
+    Attributes:
+        consumers (MutableSequence[google.cloud.metastore_v1beta.types.NetworkConfig.Consumer]):
+            Immutable. The consumer-side network
+            configuration for the Dataproc Metastore
+            instance.
+    """
+
+    class Consumer(proto.Message):
+        r"""Contains information of the customer's network
+        configurations.
+
+
+        .. _oneof: https://proto-plus-python.readthedocs.io/en/stable/fields.html#oneofs-mutually-exclusive-fields
+
+        Attributes:
+            subnetwork (str):
+                Immutable. The subnetwork of the customer project from which
+                an IP address is reserved and used as the Dataproc Metastore
+                service's endpoint. It is accessible to hosts in the subnet
+                and to all hosts in a subnet in the same region and same
+                network. There must be at least one IP address available in
+                the subnet's primary range. The subnet is specified in the
+                following form:
+
+                \`projects/{project_number}/regions/{region_id}/subnetworks/{subnetwork_id}
+
+                This field is a member of `oneof`_ ``vpc_resource``.
+            endpoint_uri (str):
+                Output only. The URI of the endpoint used to
+                access the metastore service.
+        """
+
+        subnetwork: str = proto.Field(
+            proto.STRING,
+            number=1,
+            oneof="vpc_resource",
+        )
+        endpoint_uri: str = proto.Field(
+            proto.STRING,
+            number=3,
+        )
+
+    consumers: MutableSequence[Consumer] = proto.RepeatedField(
+        proto.MESSAGE,
+        number=1,
+        message=Consumer,
+    )
+
+
+class TelemetryConfig(proto.Message):
+    r"""Telemetry Configuration for the Dataproc Metastore service.
+
+    Attributes:
+        log_format (google.cloud.metastore_v1beta.types.TelemetryConfig.LogFormat):
+            The output format of the Dataproc Metastore
+            service's logs.
+    """
+
+    class LogFormat(proto.Enum):
+        r""""""
+        LOG_FORMAT_UNSPECIFIED = 0
+        LEGACY = 1
+        JSON = 2
+
+    log_format: LogFormat = proto.Field(
+        proto.ENUM,
+        number=1,
+        enum=LogFormat,
     )
 
 
@@ -436,10 +691,13 @@ class MetadataImport(proto.Message):
             The description of the metadata import.
         create_time (google.protobuf.timestamp_pb2.Timestamp):
             Output only. The time when the metadata
-            import was created.
+            import was started.
         update_time (google.protobuf.timestamp_pb2.Timestamp):
             Output only. The time when the metadata
             import was last updated.
+        end_time (google.protobuf.timestamp_pb2.Timestamp):
+            Output only. The time when the metadata
+            import finished.
         state (google.cloud.metastore_v1beta.types.MetadataImport.State):
             Output only. The current state of the
             metadata import.
@@ -517,6 +775,11 @@ class MetadataImport(proto.Message):
     update_time: timestamp_pb2.Timestamp = proto.Field(
         proto.MESSAGE,
         number=4,
+        message=timestamp_pb2.Timestamp,
+    )
+    end_time: timestamp_pb2.Timestamp = proto.Field(
+        proto.MESSAGE,
+        number=7,
         message=timestamp_pb2.Timestamp,
     )
     state: State = proto.Field(
@@ -607,6 +870,9 @@ class Backup(proto.Message):
             the time of backup.
         description (str):
             The description of the backup.
+        restoring_services (MutableSequence[str]):
+            Output only. Services that are restoring from
+            the backup.
     """
 
     class State(proto.Enum):
@@ -616,6 +882,7 @@ class Backup(proto.Message):
         DELETING = 2
         ACTIVE = 3
         FAILED = 4
+        RESTORING = 5
 
     name: str = proto.Field(
         proto.STRING,
@@ -645,6 +912,10 @@ class Backup(proto.Message):
         proto.STRING,
         number=6,
     )
+    restoring_services: MutableSequence[str] = proto.RepeatedField(
+        proto.STRING,
+        number=7,
+    )
 
 
 class Restore(proto.Message):
@@ -663,7 +934,7 @@ class Restore(proto.Message):
             Output only. The relative resource name of the metastore
             service backup to restore from, in the following form:
 
-            ``projects/{project_id}/locations/{location_id}/services/{service_id}/backups/{backup_id}``
+            ``projects/{project_id}/locations/{location_id}/services/{service_id}/backups/{backup_id}``.
         type_ (google.cloud.metastore_v1beta.types.Restore.RestoreType):
             Output only. The type of restore.
         details (str):
@@ -681,7 +952,7 @@ class Restore(proto.Message):
         CANCELLED = 4
 
     class RestoreType(proto.Enum):
-        r"""The type of restore."""
+        r"""The type of restore. If unspecified, defaults to ``METADATA_ONLY``."""
         RESTORE_TYPE_UNSPECIFIED = 0
         FULL = 1
         METADATA_ONLY = 2
@@ -1096,7 +1367,7 @@ class CreateMetadataImportRequest(proto.Message):
             Required. The relative resource name of the service in which
             to create a metastore import, in the following form:
 
-            ``projects/{project_number}/locations/{location_id}/services/{service_id}``
+            ``projects/{project_number}/locations/{location_id}/services/{service_id}``.
         metadata_import_id (str):
             Required. The ID of the metadata import,
             which is used as the final component of the
@@ -1318,7 +1589,7 @@ class CreateBackupRequest(proto.Message):
             Required. The relative resource name of the service in which
             to create a backup of the following form:
 
-            ``projects/{project_number}/locations/{location_id}/services/{service_id}``
+            ``projects/{project_number}/locations/{location_id}/services/{service_id}``.
         backup_id (str):
             Required. The ID of the backup, which is used
             as the final component of the backup's name.
@@ -1425,7 +1696,7 @@ class ExportMetadataRequest(proto.Message):
             Required. The relative resource name of the metastore
             service to run export, in the following form:
 
-            ``projects/{project_id}/locations/{location_id}/services/{service_id}``
+            ``projects/{project_id}/locations/{location_id}/services/{service_id}``.
         request_id (str):
             Optional. A request ID. Specify a unique request ID to allow
             the server to ignore the request if it has completed. The
@@ -1475,12 +1746,12 @@ class RestoreServiceRequest(proto.Message):
             Required. The relative resource name of the metastore
             service to run restore, in the following form:
 
-            ``projects/{project_id}/locations/{location_id}/services/{service_id}``
+            ``projects/{project_id}/locations/{location_id}/services/{service_id}``.
         backup (str):
             Required. The relative resource name of the metastore
             service backup to restore from, in the following form:
 
-            ``projects/{project_id}/locations/{location_id}/services/{service_id}/backups/{backup_id}``
+            ``projects/{project_id}/locations/{location_id}/services/{service_id}/backups/{backup_id}``.
         restore_type (google.cloud.metastore_v1beta.types.Restore.RestoreType):
             Optional. The type of restore. If unspecified, defaults to
             ``METADATA_ONLY``.
@@ -1636,6 +1907,7 @@ class DatabaseDumpSpec(proto.Message):
         r"""The type of the database dump."""
         TYPE_UNSPECIFIED = 0
         MYSQL = 1
+        AVRO = 2
 
 
 __all__ = tuple(sorted(__protobuf__.manifest))

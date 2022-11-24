@@ -36,6 +36,7 @@ __protobuf__ = proto.module(
         "EncryptionConfig",
         "AuxiliaryVersionConfig",
         "NetworkConfig",
+        "TelemetryConfig",
         "MetadataManagementActivity",
         "MetadataImport",
         "MetadataExport",
@@ -80,7 +81,7 @@ class Service(proto.Message):
             This field is a member of `oneof`_ ``metastore_config``.
         name (str):
             Immutable. The relative resource name of the metastore
-            service, of the form:
+            service, in the following format:
 
             ``projects/{project_number}/locations/{location_id}/services/{service_id}``.
         create_time (google.protobuf.timestamp_pb2.Timestamp):
@@ -142,12 +143,15 @@ class Service(proto.Message):
             Dataproc Metastore service to encrypt customer
             data at rest. Cannot be updated.
         network_config (google.cloud.metastore_v1alpha.types.NetworkConfig):
-            Immutable. The configuration specifying the
-            network settings for the Dataproc Metastore
-            service.
+            The configuration specifying the network
+            settings for the Dataproc Metastore service.
         database_type (google.cloud.metastore_v1alpha.types.Service.DatabaseType):
             Immutable. The database type that the
             Metastore service stores its data.
+        telemetry_config (google.cloud.metastore_v1alpha.types.TelemetryConfig):
+            The configuration specifying telemetry settings for the
+            Dataproc Metastore service. If unspecified defaults to
+            ``JSON``.
     """
 
     class State(proto.Enum):
@@ -276,6 +280,11 @@ class Service(proto.Message):
         proto.ENUM,
         number=22,
         enum=DatabaseType,
+    )
+    telemetry_config: "TelemetryConfig" = proto.Field(
+        proto.MESSAGE,
+        number=23,
+        message="TelemetryConfig",
     )
 
 
@@ -583,8 +592,8 @@ class NetworkConfig(proto.Message):
 
         Attributes:
             subnetwork (str):
-                The subnetwork of the customer project from which an IP
-                address is reserved and used as the Dataproc Metastore
+                Immutable. The subnetwork of the customer project from which
+                an IP address is reserved and used as the Dataproc Metastore
                 service's endpoint. It is accessible to hosts in the subnet
                 and to all hosts in a subnet in the same region and same
                 network. There must be at least one IP address available in
@@ -613,6 +622,28 @@ class NetworkConfig(proto.Message):
         proto.MESSAGE,
         number=1,
         message=Consumer,
+    )
+
+
+class TelemetryConfig(proto.Message):
+    r"""Telemetry Configuration for the Dataproc Metastore service.
+
+    Attributes:
+        log_format (google.cloud.metastore_v1alpha.types.TelemetryConfig.LogFormat):
+            The output format of the Dataproc Metastore
+            service's logs.
+    """
+
+    class LogFormat(proto.Enum):
+        r""""""
+        LOG_FORMAT_UNSPECIFIED = 0
+        LEGACY = 1
+        JSON = 2
+
+    log_format: LogFormat = proto.Field(
+        proto.ENUM,
+        number=1,
+        enum=LogFormat,
     )
 
 
